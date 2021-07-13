@@ -63,7 +63,11 @@ def add_activity():
 def delete_activity():
     return 'activity got deleted'
 
-
+@app.route('/debug')
+def debug():
+    mycursor.execute("select * from activities")
+    print(mycursor.fetchall())
+    return 'debug ended, watch terminal for result', 200
 
 
 
