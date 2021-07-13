@@ -1,7 +1,10 @@
+from random import randrange
+
 import flask
 from flask import Flask
 from flask import Flask, jsonify,request
 import mysql.connector
+import json
 from config import *
 app = Flask(__name__)
 
@@ -10,15 +13,13 @@ mycursor = mydb.cursor()
 
 @app.route('/get_random_activity')
 def get_random_activity():
-    #TODO: select random activity out of db
-    sqlGetRandomActivity = "Select * from activities"
-    mycursor.execute(sqlGetRandomActivity)
+    mycursor.execute("Select * from activities")
     activitys = mycursor.fetchall()
-
     print(activitys)
-    #TODO: output tuple to json
     if len(activitys) != 0:
-        return 'random activity', 200
+        x = randrange(len(activitys))
+        # TODO: output tuple to json
+        return str(activitys[x]), 200
     return 'no activitys found', 400
 
 @app.route('/get_specific_activity')
@@ -31,10 +32,15 @@ def get_specific_activity():
     kidPause = bool(json_data['kidPause'])
 
     if personCount != None and budget != None and dogFriendly != None and kidFriendly != None and kidPause != None:
-        #TODO: query for db
-        sqlSpecificActivity = "S"
+        sqlSpecificActivity = "Select * from activities where " \
+                              "maxPersonCount >= " + str(personCount) + \
+                              " and price <= " + str(budget) + \
+                              " and dogFriendly = " + str(dogFriendly) + \
+                              " and kidFriendly = " + str(kidFriendly) + \
+                              " and kidPause = " + str(kidPause)+";"
         mycursor.execute(sqlSpecificActivity)
-        if len(mycursor.fetchall()) != 0:
+        result = mycursor.fetchall()
+        if len(result) != 0:
             #TODO: output tuple as json
             return mycursor.fetchall(), 200
         return 'there are no events listed with your specific parameters', 400
@@ -66,7 +72,15 @@ def delete_activity():
 @app.route('/debug')
 def debug():
     mycursor.execute("select * from activities")
-    print(mycursor.fetchall())
+    result = mycursor.fetchall()
+
+    for i in range(len(result)):
+        print(result[i][1])
+
+    ActivityData = {}
+    Activities = {"activityDetails": [ActivityData]}
+    ActivityData['budget']
+    print(json.dumps(list(result)))
     return 'debug ended, watch terminal for result', 200
 
 
