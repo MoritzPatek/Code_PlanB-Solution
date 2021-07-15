@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'package:after_layout/after_layout.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -18,54 +15,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Introduction screen',
       debugShowCheckedModeBanner: false,
-      home: Splash(),
-    );
-  }
-}
-
-class Splash extends StatefulWidget {
-  @override
-  SplashState createState() => new SplashState();
-}
-
-class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
-  Future checkFirstSeen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _seen = (prefs.getBool('seen') ?? false);
-
-    if (_seen) {
-      Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new Home()));
-    } else {
-      await prefs.setBool('seen', true);
-      Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new OnBoardingPage()));
-    }
-  }
-
-  @override
-  void afterFirstLayout(BuildContext context) => checkFirstSeen();
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
-        child: new Text('Loading...'),
-      ),
-    );
-  }
-}
-
-class Home extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Hello'),
-      ),
-      body: new Center(
-        child: new Text('This is the second page'),
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: OnBoardingPage(),
     );
   }
 }
@@ -80,7 +31,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
   void _onIntroEnd(context) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => Home()),
+      MaterialPageRoute(builder: (_) => HomePage()),
     );
   }
 
@@ -122,25 +73,33 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           ),
         ),
       ),
-
+      globalFooter: SizedBox(
+        width: double.infinity,
+        height: 60,
+        child: ElevatedButton(
+          child: const Text(
+            'Let\s go right away!',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => _onIntroEnd(context),
+        ),
+      ),
       pages: [
         PageViewModel(
           title: "New Experiences",
-          body: "Meet new People, have a relaxed evening or do sports.",
+          body: "Meet new People, have a relaxed evening or do sports",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Customizable",
-          body:
-              "Do you have kids, pets or anything else tell us and we will find you the right activity.",
+          body: "",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "For Everybody",
-          body:
-              "High or low budget? No worries, we have the activity for everybody.",
+          body: "",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),
@@ -151,36 +110,38 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       skipFlex: 0,
       nextFlex: 0,
       //rtl: true, // Display as right-to-left
-      skip: const Text('Skip',
-          style: TextStyle(
-              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-      next: const Icon(
-        Icons.arrow_forward,
-        color: Colors.black,
-        size: 30,
-      ),
-      done: const Text('Done',
-          style: TextStyle(
-              fontWeight: FontWeight.w600, color: Colors.black, fontSize: 18)),
+      skip: const Text('Skip'),
+      next: const Icon(Icons.arrow_forward),
+      done: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600)),
       curve: Curves.fastLinearToSlowEaseIn,
       controlsMargin: const EdgeInsets.all(16),
       controlsPadding: kIsWeb
           ? const EdgeInsets.all(12.0)
-          : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 25.0),
+          : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
       dotsDecorator: const DotsDecorator(
-          size: Size(15.0, 15.0),
-          color: Colors.black54,
-          activeSize: Size(32.0, 13.0),
-          activeShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25.0)),
-          ),
-          activeColor: Colors.black),
+        size: Size(10.0, 10.0),
+        color: Color(0xFFBDBDBD),
+        activeSize: Size(22.0, 10.0),
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        ),
+      ),
       dotsContainerDecorator: const ShapeDecoration(
-        color: Colors.white,
+        color: Colors.black87,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
       ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home')),
+      body: const Center(child: Text("This is the screen after Introduction")),
     );
   }
 }
