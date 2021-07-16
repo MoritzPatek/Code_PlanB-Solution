@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:app/home/home.dart';
 
 void main() => runApp(App());
 
@@ -51,20 +52,6 @@ class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
     return new Scaffold(
       body: new Center(
         child: new Text('Loading...'),
-      ),
-    );
-  }
-}
-
-class Home extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Hello'),
-      ),
-      body: new Center(
-        child: new Text('This is the second page'),
       ),
     );
   }
