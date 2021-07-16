@@ -59,7 +59,13 @@ def add_activity():
     kidFriendly = bool(json_data['kidFriendly'])
     kidPause = bool(json_data['kidPause'])
 
+    if activityName != None and websiteURL != None and personCount != None and price != None and dogFriendly != None and kidFriendly != None and kidPause != None:
+        return 'No values Provided, please try again', 400
     #TODO: evaluate data
+    if activityName != None:
+        return 'You have to provide an activityname ', 400
+    if websiteURL 'You have to provide a websiteURL'
+
     insertNewActivity = "insert into activities (activityName, websiteURL, maxPersonCount, price, dogFriendly, kidFriendly, kidPause) values ('Musuem for children', Null, Null, 30, false, true, true);"
     mycursor.execute(insertNewActivity)
     mydb.commit()
