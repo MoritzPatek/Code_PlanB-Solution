@@ -113,21 +113,21 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       pages: [
         PageViewModel(
           title: "New Experiences",
-          body: "Meet new People, have a relaxed evening or do sports.",
+          body: "Meet new people, have a relaxed evening or do sports.",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Customizable",
           body:
-              "Do you have kids, pets or anything else tell us and we will find you the right activity.",
+              "Do you have kids, pets or anything else? Tell us and we will find you the right activity.",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "For Everybody",
           body:
-              "High or low budget? No worries, we have the activity for everybody.",
+              "What's your budget? Doesn't matter, we have the right activity for everybody.",
           image: _buildImage('placeholder.png'),
           decoration: pageDecoration,
         ),

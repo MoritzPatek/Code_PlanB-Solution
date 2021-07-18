@@ -14,6 +14,10 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
+  double width = 375;
+  double height = 80;
+
+  double heightSizedBox = 50
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -41,47 +45,54 @@ class HomeState extends State<Home> {
           },
         ),
         Align(
-            alignment: Alignment(0.1, 1),
-            child: new Container(
-              height: 80.0,
-              color: Colors.transparent,
-              child: new Container(
-                  decoration: new BoxDecoration(
-                    color: Color.fromARGB(255, 219, 219, 219),
-                    borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(35.0),
-                      topRight: const Radius.circular(35.0),
-                    ),
-                    border: Border.all(
-                      color: Colors.black26,
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 3,
-                        blurRadius: 10,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
+          alignment: Alignment(0.1, 1),
+          child: new AnimatedContainer(
+              height: height,
+              duration: Duration(milliseconds: 85),
+              decoration: new BoxDecoration(
+                color: Color.fromARGB(255, 219, 219, 219),
+                borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(35.0),
+                  topRight: const Radius.circular(35.0),
+                ),
+                border: Border.all(
+                  color: Colors.black26,
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    spreadRadius: 3,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
                   ),
-                  child: new Center(
-                      child: SizedBox(
-                          width: 375,
-                          height: 50,
-                          child: new ElevatedButton(
-                            onPressed: () => animateSearchbar(),
-                            child: Text('Whats the plan for today?'),
-                            style: ElevatedButton.styleFrom(
-                                primary: Color.fromARGB(255, 189, 189, 185)),
-                          )))),
-            ))
+                ],
+              ),
+              child: new Container(
+                  margin: EdgeInsets.only(
+                      top: 10, left: 15, right: 15, bottom: (width - 30)),
+                  child: SizedBox(
+                      width: 375,
+                      height: heightSizedBox,
+                      child: new ElevatedButton(
+                        onPressed: () => updateState(),
+                        child: Text('Whats the plan for today?'),
+                        style: ElevatedButton.styleFrom(
+                            primary: Color.fromARGB(255, 189, 189, 185)),
+                      )))),
+        )
       ],
     ));
   }
 
-  void animateSearchbar() {
-    print('Animate'); // Print to console.
+  void updateState() {
+    setState(() {
+      if (height == 300) {
+        height = 150;
+      } else {
+        height = 300;
+      }
+    });
   }
 
   _getLocation() async {
