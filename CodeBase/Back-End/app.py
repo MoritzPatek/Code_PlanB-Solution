@@ -59,17 +59,27 @@ def add_activity():
     kidFriendly = bool(json_data['kidFriendly'])
     kidPause = bool(json_data['kidPause'])
 
-    if activityName != None and websiteURL != None and personCount != None and price != None and dogFriendly != None and kidFriendly != None and kidPause != None:
-        return 'No values Provided, please try again', 400
-    #TODO: evaluate data
-    if activityName != None:
+    if activityName is None:
         return 'You have to provide an activityname ', 400
-    if websiteURL 'You have to provide a websiteURL'
+    if personCount < 0:
+        return 'The person count can not be negative', 400
+    if price < 0:
+        return 'The price has to be zero or greater then zero, it can not be negative', 400
+    if dogFriendly is None:
+        return 'You have to provide information for dog owners', 400
+    if kidFriendly is None:
+        return 'You have to provide information for parents about the situation for kids', 400
+    if kidPause is None:
+        return 'You have to provide information for parents about the kid pause', 400
+    else:
+        insertNewActivity = "insert into activities (activityName, websiteURL, maxPersonCount, price, dogFriendly, kidFriendly, kidPause) values ('Musuem for children', Null, Null, 30, false, true, true);"
+        mycursor.execute(insertNewActivity)
+        mydb.commit()
+        return 'New activity got added.', 200
 
-    insertNewActivity = "insert into activities (activityName, websiteURL, maxPersonCount, price, dogFriendly, kidFriendly, kidPause) values ('Musuem for children', Null, Null, 30, false, true, true);"
-    mycursor.execute(insertNewActivity)
-    mydb.commit()
-    return "new user got added, check emails to verify account"
+
+
+
 
 @app.route('/delete_activity')
 def delete_activity():
