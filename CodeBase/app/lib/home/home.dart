@@ -17,7 +17,7 @@ class HomeState extends State<Home> {
   double width = 375;
   double height = 80;
 
-  double heightSizedBox = 50
+  double heightSizedBox = 50;
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -45,52 +45,69 @@ class HomeState extends State<Home> {
           },
         ),
         Align(
-          alignment: Alignment(0.1, 1),
-          child: new AnimatedContainer(
-              height: height,
-              duration: Duration(milliseconds: 85),
-              decoration: new BoxDecoration(
-                color: Color.fromARGB(255, 219, 219, 219),
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(35.0),
-                  topRight: const Radius.circular(35.0),
-                ),
-                border: Border.all(
-                  color: Colors.black26,
-                  width: 2.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 3,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
+            alignment: Alignment(0.1, 1),
+            child: new AnimatedContainer(
+                height: height,
+                width: 500,
+                duration: Duration(milliseconds: 85),
+                decoration: new BoxDecoration(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(35.0),
+                    topRight: const Radius.circular(35.0),
                   ),
-                ],
-              ),
-              child: new Container(
+                  border: Border.all(
+                    color: Colors.black26,
+                    width: 2.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white,
+                      spreadRadius: 3,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: new Container(
                   margin: EdgeInsets.only(
-                      top: 10, left: 15, right: 15, bottom: (width - 30)),
+                      top: 20, left: 15, right: 15, bottom: height - 80),
                   child: SizedBox(
                       width: 375,
                       height: heightSizedBox,
-                      child: new ElevatedButton(
-                        onPressed: () => updateState(),
-                        child: Text('Whats the plan for today?'),
-                        style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(255, 189, 189, 185)),
-                      )))),
-        )
+                      child: ElevatedButton.icon(
+                        icon: Icon(
+                          Icons.search,
+                          color: Colors.red,
+                          size: 24.0,
+                        ),
+                        label: Text(
+                          "What's the plan for today?",
+                          style: TextStyle(color: Colors.black, fontSize: 18),
+                        ),
+                        onPressed: () {
+                          updateState();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.grey.shade200),
+                            shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    side: BorderSide(color: Colors.black12)))),
+                      )),
+                )))
       ],
     ));
   }
 
   void updateState() {
     setState(() {
-      if (height == 300) {
-        height = 150;
+      if (height == 500) {
+        height = 120;
       } else {
-        height = 300;
+        height = 500;
       }
     });
   }
