@@ -129,7 +129,12 @@ class HomeState extends State<Home> {
                               height: 25,
                             )
                           : SizedBox(),
-                      pressed ? Text("For how many people?") : SizedBox(),
+                      pressed
+                          ? Text(
+                              "For how many people?",
+                              style: TextStyle(fontSize: 18),
+                            )
+                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 10,
@@ -141,6 +146,7 @@ class HomeState extends State<Home> {
                               minHeight: 70.0,
                               initialLabelIndex: _numberOfPeople,
                               cornerRadius: 20.0,
+                              radiusStyle: true,
                               activeFgColor: Colors.white,
                               inactiveBgColor: Colors.grey[300],
                               inactiveFgColor: Colors.white,
@@ -180,7 +186,12 @@ class HomeState extends State<Home> {
                               height: 25,
                             )
                           : SizedBox(),
-                      pressed ? Text("What's your budget?") : SizedBox(),
+                      pressed
+                          ? Text(
+                              "What's your budget?",
+                              style: TextStyle(fontSize: 18),
+                            )
+                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 5,
@@ -195,7 +206,7 @@ class HomeState extends State<Home> {
                           ? Slider(
                               value: _currentSliderValue,
                               min: 0,
-                              max: 500,
+                              max: 150,
                               onChanged: (double value) {
                                 setState(() {
                                   _currentSliderValue = value;
@@ -225,7 +236,12 @@ class HomeState extends State<Home> {
                               height: 25,
                             )
                           : SizedBox(),
-                      pressed ? Text("Should it be dog friendly?") : SizedBox(),
+                      pressed
+                          ? Text(
+                              "Should it be dog friendly?",
+                              style: TextStyle(fontSize: 18),
+                            )
+                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 10,
@@ -237,6 +253,7 @@ class HomeState extends State<Home> {
                               minHeight: 70.0,
                               initialLabelIndex: _areKidsWithYouIndex,
                               cornerRadius: 20.0,
+                              radiusStyle: true,
                               activeFgColor: Colors.white,
                               inactiveBgColor: Colors.grey[300],
                               inactiveFgColor: Colors.white,
@@ -270,7 +287,12 @@ class HomeState extends State<Home> {
                               height: 25,
                             )
                           : SizedBox(),
-                      pressed ? Text("Are kids with you?") : SizedBox(),
+                      pressed
+                          ? Text(
+                              "Are kids with you?",
+                              style: TextStyle(fontSize: 18),
+                            )
+                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 10,
@@ -282,6 +304,7 @@ class HomeState extends State<Home> {
                               minHeight: 70.0,
                               initialLabelIndex: _index,
                               cornerRadius: 20.0,
+                              radiusStyle: true,
                               activeFgColor: Colors.white,
                               inactiveBgColor: Colors.grey[300],
                               inactiveFgColor: Colors.white,
@@ -329,7 +352,10 @@ class HomeState extends State<Home> {
                           : SizedBox(),
                       pressed
                           ? shouldBeKidFriendly
-                              ? Text("Do you need a kids pause?")
+                              ? Text(
+                                  "Do you need a kids pause?",
+                                  style: TextStyle(fontSize: 18),
+                                )
                               : SizedBox()
                           : SizedBox(),
                       pressed
@@ -346,6 +372,7 @@ class HomeState extends State<Home> {
                                   minHeight: 70.0,
                                   initialLabelIndex: _kidsPauseIndex,
                                   cornerRadius: 20.0,
+                                  radiusStyle: true,
                                   activeFgColor: Colors.white,
                                   inactiveBgColor: Colors.grey[300],
                                   inactiveFgColor: Colors.white,
