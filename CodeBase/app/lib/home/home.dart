@@ -18,7 +18,12 @@ class HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
   double width = 375;
   double height = 80;
+  int _numberOfPeople = 0;
+  int _index = 0;
+  int _areKidsWithYouIndex = 0;
+  int _kidsPauseIndex = 0;
   bool pressed = false;
+  bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
 
@@ -134,7 +139,7 @@ class HomeState extends State<Home> {
                           ? ToggleSwitch(
                               minWidth: 90.0,
                               minHeight: 70.0,
-                              initialLabelIndex: 0,
+                              initialLabelIndex: _numberOfPeople,
                               cornerRadius: 20.0,
                               activeFgColor: Colors.white,
                               inactiveBgColor: Colors.grey[300],
@@ -166,7 +171,7 @@ class HomeState extends State<Home> {
                                 ),
                               ],
                               onToggle: (index) {
-                                print('switched to: $index');
+                                _numberOfPeople = index;
                               },
                             )
                           : SizedBox(),
@@ -178,7 +183,25 @@ class HomeState extends State<Home> {
                       pressed ? Text("What's your budget?") : SizedBox(),
                       pressed
                           ? SizedBox(
-                              height: 10,
+                              height: 5,
+                            )
+                          : SizedBox(),
+                      pressed
+                          ? SizedBox(
+                              height: 0,
+                            )
+                          : SizedBox(),
+                      pressed
+                          ? Slider(
+                              value: _currentSliderValue,
+                              min: 0,
+                              max: 500,
+                              onChanged: (double value) {
+                                setState(() {
+                                  _currentSliderValue = value;
+                                  print(_currentSliderValue.round());
+                                });
+                              },
                             )
                           : SizedBox(),
                       pressed
@@ -199,21 +222,158 @@ class HomeState extends State<Home> {
                           : SizedBox(),
                       pressed
                           ? SizedBox(
+                              height: 25,
+                            )
+                          : SizedBox(),
+                      pressed ? Text("Should it be dog friendly?") : SizedBox(),
+                      pressed
+                          ? SizedBox(
                               height: 10,
                             )
                           : SizedBox(),
                       pressed
-                          ? Slider(
-                              value: _currentSliderValue,
-                              min: 0,
-                              max: 500,
-                              onChanged: (double value) {
+                          ? ToggleSwitch(
+                              minWidth: 90.0,
+                              minHeight: 70.0,
+                              initialLabelIndex: _areKidsWithYouIndex,
+                              cornerRadius: 20.0,
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: Colors.grey[300],
+                              inactiveFgColor: Colors.white,
+                              totalSwitches: 2,
+                              iconSize: 30.0,
+                              borderWidth: 1.0,
+                              borderColor: [Colors.grey],
+                              activeBgColors: [
+                                [Colors.red],
+                                [Colors.green],
+                              ],
+                              customIcons: [
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                  size: 55.0,
+                                ),
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: 55.0,
+                                ),
+                              ],
+                              onToggle: (index) {
+                                _areKidsWithYouIndex = index;
+                              },
+                            )
+                          : SizedBox(),
+                      pressed
+                          ? SizedBox(
+                              height: 25,
+                            )
+                          : SizedBox(),
+                      pressed ? Text("Are kids with you?") : SizedBox(),
+                      pressed
+                          ? SizedBox(
+                              height: 10,
+                            )
+                          : SizedBox(),
+                      pressed
+                          ? ToggleSwitch(
+                              minWidth: 90.0,
+                              minHeight: 70.0,
+                              initialLabelIndex: _index,
+                              cornerRadius: 20.0,
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: Colors.grey[300],
+                              inactiveFgColor: Colors.white,
+                              totalSwitches: 2,
+                              iconSize: 30.0,
+                              borderWidth: 1.0,
+                              borderColor: [Colors.grey],
+                              activeBgColors: [
+                                [Colors.red],
+                                [Colors.green],
+                              ],
+                              customIcons: [
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                  size: 55.0,
+                                ),
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: 55.0,
+                                ),
+                              ],
+                              onToggle: (index) {
                                 setState(() {
-                                  _currentSliderValue = value;
-                                  print(_currentSliderValue.round());
+                                  if (index == 0) {
+                                    _index = 0;
+                                    shouldBeKidFriendly = false;
+                                    height = 700;
+                                  } else {
+                                    _index = 1;
+                                    shouldBeKidFriendly = true;
+                                    height = 850;
+                                  }
                                 });
                               },
                             )
+                          : SizedBox(),
+                      pressed
+                          ? shouldBeKidFriendly
+                              ? SizedBox(
+                                  height: 25,
+                                )
+                              : SizedBox()
+                          : SizedBox(),
+                      pressed
+                          ? shouldBeKidFriendly
+                              ? Text("Do you need a kids pause?")
+                              : SizedBox()
+                          : SizedBox(),
+                      pressed
+                          ? shouldBeKidFriendly
+                              ? SizedBox(
+                                  height: 10,
+                                )
+                              : SizedBox()
+                          : SizedBox(),
+                      pressed
+                          ? shouldBeKidFriendly
+                              ? ToggleSwitch(
+                                  minWidth: 90.0,
+                                  minHeight: 70.0,
+                                  initialLabelIndex: _kidsPauseIndex,
+                                  cornerRadius: 20.0,
+                                  activeFgColor: Colors.white,
+                                  inactiveBgColor: Colors.grey[300],
+                                  inactiveFgColor: Colors.white,
+                                  totalSwitches: 2,
+                                  iconSize: 30.0,
+                                  borderWidth: 1.0,
+                                  borderColor: [Colors.grey],
+                                  activeBgColors: [
+                                    [Colors.red],
+                                    [Colors.green],
+                                  ],
+                                  customIcons: [
+                                    Icon(
+                                      Icons.close,
+                                      color: Colors.black,
+                                      size: 55.0,
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.black,
+                                      size: 55.0,
+                                    ),
+                                  ],
+                                  onToggle: (index) {
+                                    _kidsPauseIndex = index;
+                                  },
+                                )
+                              : SizedBox()
                           : SizedBox(),
                     ])))
           ],
@@ -222,11 +382,11 @@ class HomeState extends State<Home> {
 
   void updateState() {
     setState(() {
-      if (height == 500) {
+      if (height == 700) {
         height = 120;
         pressed = false;
       } else {
-        height = 500;
+        height = 700;
         pressed = true;
       }
     });
