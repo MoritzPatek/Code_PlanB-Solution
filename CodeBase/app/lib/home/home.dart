@@ -1,82 +1,36 @@
 import 'dart:async';
-import 'dart:html';
-import 'package:after_layout/after_layout.dart';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'event.dart';
 
-const baseUrl = "localhost:5000";
+const baseUrl = "http://localhost:5000";
 
-class API {
-  static Future getEvents() {
-    const url = baseUrl + "/debug";
-    return http.get(Uri.parse(url));
-  }
-}
+Future<List<Event>> fetchEvent() async {
+  final response = await http.get(Uri.parse('http://localhost:5000/debug'));
 
-class Bar {
-  String a;
-
-  Bar({required this.a});
-}
-
-class Event {
-  String name;
-  String address;
-  int budget;
-  String url;
-  int personCount;
-  bool kidFriendly;
-  bool kidPause;
-  bool dogFriendly;
-  TimeOfDay from;
-  TimeOfDay till;
-
-  Event(
-      {required this.name,
-      required this.address,
-      required this.budget,
-      required this.url,
-      required this.personCount,
-      required this.kidFriendly,
-      required this.kidPause,
-      required this.dogFriendly,
-      required this.from,
-      required this.till});
-
-  Event.fromJson(Map json)
-      : name = json['name'],
-        address = json['address'],
-        budget = json['budget'],
-        url = json['url'],
-        personCount = json['personCount'],
-        kidFriendly = json['kidFriendly'],
-        kidPause = json['kidPause'],
-        dogFriendly = json['dogFriendly'],
-        from = json['from'],
-        till = json['till'];
-
-  Map toJson() {
-    return {
-      'name': name,
-      'address': address,
-      'budget': budget,
-      'url': url,
-      'personCount': personCount,
-      'kidFriendly': kidFriendly,
-      'kidPause': kidPause,
-      'dogFriendly': dogFriendly,
-      'from': from,
-      'till': till
-    };
+  if (response.statusCode == 200) {
+    Map<String, dynamic> map = json.decode(response.body);
+    List<Event> events = [];
+    for (var item in map.values) {
+      events.add(new Event(
+          name: item[0]['name'],
+          address: item[0]['address'],
+          url: item[0]['url'],
+          budget: item[0]['budget'],
+          dogFriendly: item[0]['dogFriendly'],
+          kidFriendly: item[0]['kidFriendly'],
+          kidPause: item[0]['kidPause'],
+          personCount: item[0]['personCount']));
+    }
+    return events;
+  } else {
+    throw Exception('Failed to load events');
   }
 }
 
@@ -87,7 +41,7 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
-  late Future<Event> futureEvent;
+  late Future<List<Event>> futureEvent;
   double width = 375;
   double height = 80;
   int _numberOfPeople = 0;
@@ -98,7 +52,6 @@ class HomeState extends State<Home> {
   bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
-  List<Event> users = [];
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -111,22 +64,9 @@ class HomeState extends State<Home> {
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
 
-  _getEvents() {
-    API.getEvents().then((response) {
-      setState(() {
-        Iterable list = json.decode(response.body);
-        users = list.map((model) => Event.fromJson(model)).toList();
-      });
-    });
-  }
-
-  initState() {
+  void initState() {
     super.initState();
-    _getEvents();
-  }
-
-  dispose() {
-    super.dispose();
+    futureEvent = fetchEvent();
   }
 
   @override
@@ -216,12 +156,31 @@ class HomeState extends State<Home> {
                             )),
                       ),
                       pressed
-                          ? ListView.builder(
-                              itemCount: users.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(title: Text(users[index].name));
+                          ? Center(
+                              child: FutureBuilder<List<Event>>(
+                              future: futureEvent,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Column(
+                                    children: [
+                                      ListView.builder(
+                                          itemBuilder: (context, index) {
+                                        return Column(
+                                          children: [
+                                            Text(snapshot.data![index].name)
+                                          ],
+                                        );
+                                      })
+                                    ],
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text('${snapshot.error}');
+                                }
+
+                                // By default, show a loading spinner.
+                                return const CircularProgressIndicator();
                               },
-                            )
+                            ))
                           : SizedBox(),
                       pressed
                           ? SizedBox(

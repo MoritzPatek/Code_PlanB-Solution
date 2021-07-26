@@ -91,17 +91,16 @@ def debug():
     from collections import defaultdict
 
     e = defaultdict(list)
-    mycursor.execute("select * from event")
+    mycursor.execute("select * from activities")
     response = mycursor.fetchall()
     for element in response:
         e[element[0]].append({'name': element[1], 'address': element[2],
                               'budget': element[3], 'url': element[4],
                               'personCount': element[5], 'kidFriendly': element[6],
-                              'kidPause': element[7], 'dogFriendly': element[8],
-                              'from': element[9], 'till': element[10]})
+                              'kidPause': element[7], 'dogFriendly': element[8]})
 
     json = (simplejson.dumps(e))
-    return json
+    return json, 200
 
 
 if __name__ == '__main__':
