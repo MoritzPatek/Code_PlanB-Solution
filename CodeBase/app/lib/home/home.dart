@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,76 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+
+const baseUrl = "localhost:5000";
+
+class API {
+  static Future getEvents() {
+    const url = baseUrl + "/debug";
+    return http.get(Uri.parse(url));
+  }
+}
+
+class Bar {
+  String a;
+
+  Bar({required this.a});
+}
+
+class Event {
+  String name;
+  String address;
+  int budget;
+  String url;
+  int personCount;
+  bool kidFriendly;
+  bool kidPause;
+  bool dogFriendly;
+  TimeOfDay from;
+  TimeOfDay till;
+
+  Event(
+      {required this.name,
+      required this.address,
+      required this.budget,
+      required this.url,
+      required this.personCount,
+      required this.kidFriendly,
+      required this.kidPause,
+      required this.dogFriendly,
+      required this.from,
+      required this.till});
+
+  Event.fromJson(Map json)
+      : name = json['name'],
+        address = json['address'],
+        budget = json['budget'],
+        url = json['url'],
+        personCount = json['personCount'],
+        kidFriendly = json['kidFriendly'],
+        kidPause = json['kidPause'],
+        dogFriendly = json['dogFriendly'],
+        from = json['from'],
+        till = json['till'];
+
+  Map toJson() {
+    return {
+      'name': name,
+      'address': address,
+      'budget': budget,
+      'url': url,
+      'personCount': personCount,
+      'kidFriendly': kidFriendly,
+      'kidPause': kidPause,
+      'dogFriendly': dogFriendly,
+      'from': from,
+      'till': till
+    };
+  }
+}
 
 class Home extends StatefulWidget {
   @override
@@ -16,6 +87,7 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
+  late Future<Event> futureEvent;
   double width = 375;
   double height = 80;
   int _numberOfPeople = 0;
@@ -26,6 +98,7 @@ class HomeState extends State<Home> {
   bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
+  List<Event> users = [];
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -37,6 +110,24 @@ class HomeState extends State<Home> {
       target: LatLng(37.43296265331129, -122.08832357078792),
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
+
+  _getEvents() {
+    API.getEvents().then((response) {
+      setState(() {
+        Iterable list = json.decode(response.body);
+        users = list.map((model) => Event.fromJson(model)).toList();
+      });
+    });
+  }
+
+  initState() {
+    super.initState();
+    _getEvents();
+  }
+
+  dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +215,14 @@ class HomeState extends State<Home> {
                                               color: Colors.black12)))),
                             )),
                       ),
+                      pressed
+                          ? ListView.builder(
+                              itemCount: users.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(title: Text(users[index].name));
+                              },
+                            )
+                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 25,

@@ -1,6 +1,7 @@
 from random import randrange
 
 import flask
+import simplejson as simplejson
 from flask import Flask
 from flask import Flask, jsonify,request
 import mysql.connector
@@ -87,18 +88,20 @@ def delete_activity():
 
 @app.route('/debug')
 def debug():
-    mycursor.execute("select * from activities")
-    result = mycursor.fetchall()
+    from collections import defaultdict
 
-    for i in range(len(result)):
-        print(result[i][1])
+    e = defaultdict(list)
+    mycursor.execute("select * from event")
+    response = mycursor.fetchall()
+    for element in response:
+        e[element[0]].append({'name': element[1], 'address': element[2],
+                              'budget': element[3], 'url': element[4],
+                              'personCount': element[5], 'kidFriendly': element[6],
+                              'kidPause': element[7], 'dogFriendly': element[8],
+                              'from': element[9], 'till': element[10]})
 
-    ActivityData = {}
-    Activities = {"activityDetails": [ActivityData]}
-    ActivityData['budget']
-    print(json.dumps(list(result)))
-    return 'debug ended, watch terminal for result', 200
-
+    json = (simplejson.dumps(e))
+    return json
 
 
 if __name__ == '__main__':
