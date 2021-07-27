@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'package:app/searchList/searchList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -18,15 +19,26 @@ Future<List<Event>> fetchEvent() async {
     Map<String, dynamic> map = json.decode(response.body);
     List<Event> events = [];
     for (var item in map.values) {
+      print("hey");
+      print(item);
+      print(item[0]['name']);
+      print(item[0]['address']);
+      print(item[0]['url']);
+      print(item[0]['budget']);
+      print(item[0]['dogFriendly']);
+      print(item[0]['kidFriendly']);
+      print(item[0]['kidPause']);
+      print(item[0]['personCount']);
+
       events.add(new Event(
           name: item[0]['name'],
           address: item[0]['address'],
           url: item[0]['url'],
-          budget: item[0]['budget'],
-          dogFriendly: item[0]['dogFriendly'],
-          kidFriendly: item[0]['kidFriendly'],
-          kidPause: item[0]['kidPause'],
-          personCount: item[0]['personCount']));
+          budget: item[0]['budget'].toString(),
+          kidFriendly: item[0]['kidFriendly'].toString(),
+          dogFriendly: item[0]['dogFriendly'].toString(),
+          kidPause: item[0]['kidPause'].toString(),
+          personCount: item[0]['personCount'].toString()));
     }
     return events;
   } else {
@@ -52,7 +64,6 @@ class HomeState extends State<Home> {
   bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
-
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
@@ -67,6 +78,12 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
     futureEvent = fetchEvent();
+  }
+
+  void _onSendRequest(context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => EventList()),
+    );
   }
 
   @override
@@ -155,33 +172,6 @@ class HomeState extends State<Home> {
                                               color: Colors.black12)))),
                             )),
                       ),
-                      pressed
-                          ? Center(
-                              child: FutureBuilder<List<Event>>(
-                              future: futureEvent,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Column(
-                                    children: [
-                                      ListView.builder(
-                                          itemBuilder: (context, index) {
-                                        return Column(
-                                          children: [
-                                            Text(snapshot.data![index].name)
-                                          ],
-                                        );
-                                      })
-                                    ],
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text('${snapshot.error}');
-                                }
-
-                                // By default, show a loading spinner.
-                                return const CircularProgressIndicator();
-                              },
-                            ))
-                          : SizedBox(),
                       pressed
                           ? SizedBox(
                               height: 25,
@@ -458,6 +448,15 @@ class HomeState extends State<Home> {
                                     _kidsPauseIndex = index;
                                   },
                                 )
+                              : SizedBox()
+                          : SizedBox(),
+                      pressed
+                          ? shouldBeKidFriendly
+                              ? ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.red),
+                                  onPressed: () => {_onSendRequest(context)},
+                                  child: Text("Search"))
                               : SizedBox()
                           : SizedBox(),
                     ])))
