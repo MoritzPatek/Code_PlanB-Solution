@@ -129,7 +129,6 @@ class HomeState extends State<Home> {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
                 newGoogleMapController = controller;
-                print("fuck");
               },
             ),
             Align(
