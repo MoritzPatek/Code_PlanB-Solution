@@ -7,6 +7,7 @@ from flask import Flask, jsonify,request
 import mysql.connector
 import json
 from config import *
+from collections import defaultdict
 app = Flask(__name__)
 
 
@@ -42,8 +43,16 @@ def get_specific_activity():
         mycursor.execute(sqlSpecificActivity)
         result = mycursor.fetchall()
         if len(result) != 0:
-            #TODO: output tuple as json
-            return mycursor.fetchall(), 200
+            e = defaultdict(list)
+            response = result
+            for element in response:
+                e[element[0]].append({'imageURL': element[1], 'name': element[2], 'address': element[3],
+                                      'budget': element[4], 'url': element[5],
+                                      'personCount': element[6], 'kidFriendly': element[7],
+                                      'kidPause': element[8], 'dogFriendly': element[9]})
+
+            json = (simplejson.dumps(e))
+            return json, 200
         return 'there are no events listed with your specific parameters', 400
     else:
         return 'missing attributes', 400
@@ -88,16 +97,15 @@ def delete_activity():
 
 @app.route('/debug')
 def debug():
-    from collections import defaultdict
 
     e = defaultdict(list)
     mycursor.execute("select * from activities")
     response = mycursor.fetchall()
     for element in response:
-        e[element[0]].append({'name': element[1], 'address': element[2],
-                              'budget': element[3], 'url': element[4],
-                              'personCount': element[5], 'kidFriendly': element[6],
-                              'kidPause': element[7], 'dogFriendly': element[8]})
+        e[element[0]].append({'imageURL':element[1], 'name': element[2], 'address': element[3],
+                              'budget': element[4], 'url': element[5],
+                              'personCount': element[6], 'kidFriendly': element[7],
+                              'kidPause': element[8], 'dogFriendly': element[9]})
 
     json = (simplejson.dumps(e))
     return json, 200

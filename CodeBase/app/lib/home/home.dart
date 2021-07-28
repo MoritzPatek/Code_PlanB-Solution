@@ -1,14 +1,16 @@
+// @dart=2.3
+
 import 'dart:async';
 import 'dart:ffi';
 import 'package:app/searchList/searchList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'event.dart';
+import 'package:geolocator/geolocator.dart';
 
 const baseUrl = "http://localhost:5000";
 
@@ -21,6 +23,7 @@ Future<List<Event>> fetchEvent() async {
     for (var item in map.values) {
       print("hey");
       print(item);
+      print(item[0]['imageURL']);
       print(item[0]['name']);
       print(item[0]['address']);
       print(item[0]['url']);
@@ -31,6 +34,7 @@ Future<List<Event>> fetchEvent() async {
       print(item[0]['personCount']);
 
       events.add(new Event(
+          imageURL: item[0]['imageURL'],
           name: item[0]['name'],
           address: item[0]['address'],
           url: item[0]['url'],
@@ -53,7 +57,8 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
-  late Future<List<Event>> futureEvent;
+  Future<List<Event>> futureEvent;
+  List<Event> events = [];
   double width = 375;
   double height = 80;
   int _numberOfPeople = 0;
@@ -64,6 +69,30 @@ class HomeState extends State<Home> {
   bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
+  GoogleMapController newGoogleMapController;
+
+  Position currentPosition;
+
+  void locatePosition() async {
+    print("sup");
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print("sup");
+
+    currentPosition = position;
+
+    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+    print("sup");
+
+    CameraPosition cameraPosition =
+        new CameraPosition(target: latLngPosition, zoom: 14);
+    print("sup");
+
+    newGoogleMapController
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    print("sup");
+  }
+
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
@@ -77,12 +106,12 @@ class HomeState extends State<Home> {
 
   void initState() {
     super.initState();
-    futureEvent = fetchEvent();
   }
 
-  void _onSendRequest(context) {
+  void _onSendRequest(context) async {
+    events = await fetchEvent() as List<Event>;
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => EventList()),
+      MaterialPageRoute(builder: (_) => EventList(events: events)),
     );
   }
 
@@ -99,6 +128,8 @@ class HomeState extends State<Home> {
               initialCameraPosition: _kGooglePlex,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
+                newGoogleMapController = controller;
+                print("fuck");
               },
             ),
             Align(
@@ -474,19 +505,5 @@ class HomeState extends State<Home> {
         pressed = true;
       }
     });
-  }
-
-  _getLocation() async {
-    var location = new Location();
-    try {
-      var currentLocation = await location.getLocation();
-
-      print("locationLatitude: ${currentLocation.latitude}");
-      print("locationLongitude: ${currentLocation.longitude}");
-      setState(
-          () {}); //rebuild the widget after getting the current location of the user
-    } on Exception {
-      var currentLocation = null;
-    }
   }
 }
