@@ -1,7 +1,6 @@
 // @dart=2.3
 
 import 'dart:async';
-import 'dart:ffi';
 import 'package:app/searchList/searchList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -74,35 +73,19 @@ class HomeState extends State<Home> {
   Position currentPosition;
 
   void locatePosition() async {
-    print("sup");
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print("sup");
-
+    Position position = await Geolocator.getLastKnownPosition();
     currentPosition = position;
-
     LatLng latLngPosition = LatLng(position.latitude, position.longitude);
-    print("sup");
-
     CameraPosition cameraPosition =
         new CameraPosition(target: latLngPosition, zoom: 14);
-    print("sup");
-
     newGoogleMapController
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    print("sup");
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
-
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
 
   void initState() {
     super.initState();
@@ -129,6 +112,8 @@ class HomeState extends State<Home> {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
                 newGoogleMapController = controller;
+                locatePosition();
+                print(currentPosition.toString());
               },
             ),
             Align(
