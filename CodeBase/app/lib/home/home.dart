@@ -1,21 +1,31 @@
 // @dart=2.3
 
 import 'dart:async';
+import 'dart:io';
 import 'package:app/searchList/searchList.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'dart:convert';
 import 'event.dart';
 import 'package:geolocator/geolocator.dart';
 
-const baseUrl = "http://localhost:5000";
+Future<List<Event>> fetchEvent(int numberOfPeople, int budget, bool dogFriendly,
+    bool kidFriendly, bool kidPause) async {
+  Map body = {
+    "personCount": numberOfPeople.toString(),
+    "budget": budget.toString(),
+    "dogFriendly": dogFriendly.toString(),
+    "kidFriendly": kidFriendly.toString(),
+    "kidPause": kidPause.toString()
+  };
+  print(body.toString());
+  final uri = Uri.http('localhost:5000', '/get_specific_activity');
+  final response = await http.post(uri,
+      headers: {"Content-Type": "application/json"}, body: json.encode(body));
 
-Future<List<Event>> fetchEvent() async {
-  final response = await http.get(Uri.parse('http://localhost:5000/debug'));
-
+  print(response);
   if (response.statusCode == 200) {
     Map<String, dynamic> map = json.decode(response.body);
     List<Event> events = [];
@@ -32,6 +42,9 @@ Future<List<Event>> fetchEvent() async {
           personCount: item[0]['personCount'].toString()));
     }
     return events;
+  }
+  if (response == 400) {
+    throw Exception('There are no Events with those parameters');
   } else {
     throw Exception('Failed to load events');
   }
@@ -49,14 +62,18 @@ class HomeState extends State<Home> {
   double width = 375;
   double height = 80;
   int _numberOfPeople = 0;
-  int _index = 0;
   int _areKidsWithYouIndex = 0;
+  int _dogFriendlyIndex = 0;
   int _kidsPauseIndex = 0;
   bool pressed = false;
   bool shouldBeKidFriendly = false;
   double heightSizedBox = 50;
   double _currentSliderValue = 20;
   GoogleMapController newGoogleMapController;
+
+  bool kidFriendly = false;
+  bool kidPause = false;
+  bool dogFriendly = false;
 
   Position currentPosition;
 
@@ -80,7 +97,8 @@ class HomeState extends State<Home> {
   }
 
   void _onSendRequest(context) async {
-    events = await fetchEvent() as List<Event>;
+    events = await fetchEvent(_numberOfPeople, _currentSliderValue.toInt(),
+        dogFriendly, kidFriendly, kidPause);
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => EventList(events: events)),
     );
@@ -300,7 +318,7 @@ class HomeState extends State<Home> {
                           ? ToggleSwitch(
                               minWidth: 90.0,
                               minHeight: 70.0,
-                              initialLabelIndex: _areKidsWithYouIndex,
+                              initialLabelIndex: _dogFriendlyIndex,
                               cornerRadius: 20.0,
                               radiusStyle: true,
                               activeFgColor: Colors.white,
@@ -327,7 +345,12 @@ class HomeState extends State<Home> {
                                 ),
                               ],
                               onToggle: (index) {
-                                _areKidsWithYouIndex = index;
+                                _dogFriendlyIndex = index;
+                                if (_dogFriendlyIndex == 1) {
+                                  dogFriendly = true;
+                                } else {
+                                  dogFriendly = false;
+                                }
                               },
                             )
                           : SizedBox(),
@@ -351,7 +374,7 @@ class HomeState extends State<Home> {
                           ? ToggleSwitch(
                               minWidth: 90.0,
                               minHeight: 70.0,
-                              initialLabelIndex: _index,
+                              initialLabelIndex: _areKidsWithYouIndex,
                               cornerRadius: 20.0,
                               radiusStyle: true,
                               activeFgColor: Colors.white,
@@ -380,12 +403,14 @@ class HomeState extends State<Home> {
                               onToggle: (index) {
                                 setState(() {
                                   if (index == 0) {
-                                    _index = 0;
+                                    _areKidsWithYouIndex = 0;
                                     shouldBeKidFriendly = false;
+                                    kidFriendly = false;
                                     height = 700;
                                   } else {
-                                    _index = 1;
+                                    _areKidsWithYouIndex = 1;
                                     shouldBeKidFriendly = true;
+                                    kidFriendly = true;
                                     height = 850;
                                   }
                                 });
@@ -447,19 +472,26 @@ class HomeState extends State<Home> {
                                   ],
                                   onToggle: (index) {
                                     _kidsPauseIndex = index;
+
+                                    if (index == 1) {
+                                      kidPause = true;
+                                    } else {
+                                      kidPause = false;
+                                    }
                                   },
                                 )
                               : SizedBox()
                           : SizedBox(),
+                      pressed ? SizedBox(height: 20) : SizedBox(),
                       pressed
-                          ? shouldBeKidFriendly
-                              ? ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.red),
-                                  onPressed: () => {_onSendRequest(context)},
-                                  child: Text("Search"))
-                              : SizedBox()
-                          : SizedBox(),
+                          ? ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                              ),
+                              onPressed: () => {_onSendRequest(context)},
+                              child: Text("Search for Activities",
+                                  style: TextStyle(color: Colors.black)))
+                          : SizedBox()
                     ])))
           ],
         ));

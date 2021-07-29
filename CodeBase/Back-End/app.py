@@ -24,22 +24,23 @@ def get_random_activity():
         return str(activitys[x]), 200
     return 'no activitys found', 400
 
-@app.route('/get_specific_activity')
+@app.route('/get_specific_activity', methods=['POST'])
 def get_specific_activity():
     json_data = flask.request.json
+    print(json_data)
     personCount = json_data['personCount']
     budget = json_data['budget']
-    dogFriendly = bool(json_data['dogFriendly'])
-    kidFriendly = bool(json_data['kidFriendly'])
-    kidPause = bool(json_data['kidPause'])
+    dogFriendly = json_data['dogFriendly']
+    kidFriendly = json_data['kidFriendly']
+    kidPause = json_data['kidPause']
 
     if personCount != None and budget != None and dogFriendly != None and kidFriendly != None and kidPause != None:
         sqlSpecificActivity = "Select * from activities where " \
-                              "maxPersonCount >= " + str(personCount) + \
-                              " and price <= " + str(budget) + \
-                              " and dogFriendly = " + str(dogFriendly) + \
-                              " and kidFriendly = " + str(kidFriendly) + \
-                              " and kidPause = " + str(kidPause)+";"
+                              "e_personCount >= " + str(personCount) + \
+                              " and e_budget <= " + str(budget) + \
+                              " and e_dogFriendly = " + str(dogFriendly) + \
+                              " and e_kidFriendly = " + str(kidFriendly) + \
+                              " and e_kidPause = " + str(kidPause)+";"
         mycursor.execute(sqlSpecificActivity)
         result = mycursor.fetchall()
         if len(result) != 0:
