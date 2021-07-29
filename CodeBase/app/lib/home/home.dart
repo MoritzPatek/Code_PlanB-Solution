@@ -20,18 +20,6 @@ Future<List<Event>> fetchEvent() async {
     Map<String, dynamic> map = json.decode(response.body);
     List<Event> events = [];
     for (var item in map.values) {
-      print("hey");
-      print(item);
-      print(item[0]['imageURL']);
-      print(item[0]['name']);
-      print(item[0]['address']);
-      print(item[0]['url']);
-      print(item[0]['budget']);
-      print(item[0]['dogFriendly']);
-      print(item[0]['kidFriendly']);
-      print(item[0]['kidPause']);
-      print(item[0]['personCount']);
-
       events.add(new Event(
           imageURL: item[0]['imageURL'],
           name: item[0]['name'],
@@ -113,7 +101,6 @@ class HomeState extends State<Home> {
                 _controller.complete(controller);
                 newGoogleMapController = controller;
                 locatePosition();
-                print(currentPosition.toString());
               },
             ),
             Align(
@@ -273,7 +260,6 @@ class HomeState extends State<Home> {
                               onChanged: (double value) {
                                 setState(() {
                                   _currentSliderValue = value;
-                                  print(_currentSliderValue.round());
                                 });
                               },
                             )
