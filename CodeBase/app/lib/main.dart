@@ -99,36 +99,31 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       globalBackgroundColor: Colors.white,
       globalHeader: Align(
         alignment: Alignment.topRight,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 16, right: 16),
-            child: _buildImage('placeholder.png', 100),
-          ),
-        ),
       ),
 
       pages: [
         PageViewModel(
           title: "New Experiences",
           body: "Meet new people, have a relaxed evening or do sports.",
-          image: _buildImage('placeholder.png'),
+          image: _buildImage('new.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Customizable",
           body:
               "Do you have kids, pets or anything else? Tell us and we will find you the right activity.",
-          image: _buildImage('placeholder.png'),
+          image: _buildImage('cost.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "For Everybody",
           body:
               "What's your budget? Doesn't matter, we have the right activity for everybody.",
-          image: _buildImage('placeholder.png'),
+          image: _buildImage('for.png'),
           decoration: pageDecoration,
         ),
       ],
+
       onDone: () => _onIntroEnd(context),
       //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
       showSkipButton: true,
