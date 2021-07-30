@@ -1,4 +1,5 @@
 from random import randrange
+from collections import defaultdict
 
 import flask
 import simplejson as simplejson
@@ -12,17 +13,6 @@ app = Flask(__name__)
 
 
 mycursor = mydb.cursor()
-
-@app.route('/get_random_activity')
-def get_random_activity():
-    mycursor.execute("Select * from activities")
-    activitys = mycursor.fetchall()
-    print(activitys)
-    if len(activitys) != 0:
-        x = randrange(len(activitys))
-        # TODO: output tuple to json
-        return str(activitys[x]), 200
-    return 'no activitys found', 400
 
 @app.route('/get_specific_activity', methods=['POST'])
 def get_specific_activity():
@@ -60,28 +50,37 @@ def get_specific_activity():
 
 @app.route('/add_activity')
 def add_activity():
-    #TODO: token required
     json_data = flask.request.json
-    activityName = json_data['activityName']
-    websiteURL = json_data['websiteURL']
+    name = json_data['name']
+    url = json_data['url']
+    address = json_data['address']
+    budget = json_data['budget']
+    kidFriendly = json_data['kidFriendly']
+    dogFriendly = json_data['dogFriendly']
+    kidPause = json_data['kidPause']
     personCount = json_data['personCount']
-    price = json_data['price']
-    dogFriendly = bool(json_data['dogFriendly'])
-    kidFriendly = bool(json_data['kidFriendly'])
-    kidPause = bool(json_data['kidPause'])
+    imageURL = json_data['imageURL']
 
-    if activityName is None:
-        return 'You have to provide an activityname ', 400
-    if personCount < 0:
-        return 'The person count can not be negative', 400
-    if price < 0:
-        return 'The price has to be zero or greater then zero, it can not be negative', 400
-    if dogFriendly is None:
-        return 'You have to provide information for dog owners', 400
+    if name is None:
+        return "A name has to be provided", 400
+    if url is None:
+        url = ""
+    if address is None:
+        return "An address has to be provided", 400
+    if budget is None:
+        budget = "0"
     if kidFriendly is None:
-        return 'You have to provide information for parents about the situation for kids', 400
+        kidFriendly = "false"
+    if dogFriendly is None:
+        dogFriendly = "false"
     if kidPause is None:
-        return 'You have to provide information for parents about the kid pause', 400
+        kidPause = "false" 
+    if int(personCount) <= 0:
+        return "personCount has to be over 0", 400
+    if personCount is None: 
+        personCount = 10000
+    if imageURL is None:
+        imageURL = "https://i.stack.imgur.com/y9DpT.jpg"
     else:
         insertNewActivity = "insert into activities (activityName, websiteURL, maxPersonCount, price, dogFriendly, kidFriendly, kidPause) values ('Musuem for children', Null, Null, 30, false, true, true);"
         mycursor.execute(insertNewActivity)
@@ -89,12 +88,14 @@ def add_activity():
         return 'New activity got added.', 200
 
 
-
-
-
 @app.route('/delete_activity')
 def delete_activity():
-    return 'activity got deleted'
+    json_data = flask.request.json
+    id = json_data['id']
+    name = json_data['name']
+    deleteActivitySQL = 'delete from activities where id ='+ str(id) + ' and name = ' + str(name) 
+    mycursor.execute(deleteActivitySQL)
+    mydb.commit()
 
 @app.route('/debug')
 def debug():
@@ -114,3 +115,4 @@ def debug():
 
 if __name__ == '__main__':
     app.run()
+
