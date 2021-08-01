@@ -1,12 +1,6 @@
-from random import randrange
-from collections import defaultdict
-
 import flask
 import simplejson as simplejson
 from flask import Flask
-from flask import Flask, jsonify,request
-import mysql.connector
-import json
 from config import *
 from collections import defaultdict
 app = Flask(__name__)
@@ -17,7 +11,6 @@ mycursor = mydb.cursor()
 @app.route('/get_specific_activity', methods=['POST'])
 def get_specific_activity():
     json_data = flask.request.json
-    print(json_data)
     personCount = json_data['personCount']
     budget = json_data['budget']
     dogFriendly = json_data['dogFriendly']
