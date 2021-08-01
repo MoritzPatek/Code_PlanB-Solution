@@ -21,7 +21,7 @@ Future<List<Event>> fetchEvent(int numberOfPeople, int budget, bool dogFriendly,
     "kidPause": kidPause.toString()
   };
   print(body.toString());
-  final uri = Uri.http('localhost:5000', '/get_specific_activity');
+  final uri = Uri.http('89.104.1.197:8000', '/get_specific_activity');
   final response = await http.post(uri,
       headers: {"Content-Type": "application/json"}, body: json.encode(body));
 
