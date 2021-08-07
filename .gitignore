@@ -1,5 +1,6 @@
 .DS_Store
 /CodeBase/Back-End/config.py
+/CodeBase/app/android/key.properties
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
